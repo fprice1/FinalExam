@@ -13,11 +13,43 @@ require(tigerstats)
 
 ```
 
+```{r}
+url2="scorpion_reaction_rolls.csv"
+scorp_data2=read.csv(url2,header=T)
+names(scorp_data2)
+attach(scorp_data2)
+rol=table(roll,Behavior)
+rol
+chisqtestGC(rol)
+sze=table(size,Behavior)
+chisqtestGC(sze)
+```
+
+
+```{r}
+contTable <- xtabs(~ Behavior + size, data = scorp_data2)
+barchart(contTable,
+	auto.key = list(
+		space = "top",
+		title = "size",
+		cex.title = 1,
+		columns = 1),
+	stack = FALSE , horizontal = FALSE)
+```
+
+
+
 # Introduction
 
-<In this section you explain what you are trying to show.  Where did the data come from?  What is the research or other question you are trying to answer?>
+Investigate whether the odors from a predator might influence the defensive behavior of Hadrurus arizonensis, and if the scorpion size plays a role in the type of response.
+
+we see this as two questions:
+
+Does presence of odor change the expected outcome on our measurements?
+
 
 #### what was asked for
+
 Investigate whether the odors from a predator might influence the defensive behavior of Hadrurus arizonensis, and if the scorpion size plays a role in the type of response.
 
 we see this as two questions
@@ -47,17 +79,52 @@ a chi-squared test would be chosen.>
 
 ## Descriptive Results
 
+In order to understand the comparison between the scorpions when odor is a factor to explain when they would attack or become more aggrevated. We must create a plot in order to compare the reaction time for the scorpions when they feel threatened by a predator and when they do not feel threatened by a predator. We must also produce a t.test in order to show the comparison between the control group as well as the experimental group so that we may see if they have a significant comparison. We will begin by showing our head(rol), which describe our results from our Scorpion Analysis.
+
+```{r}
+head(rol)
+```
+
+
 ### Graphical Descriptive Results
 
-<Graphical results here.  Make sure to show your code.  Provide appropriate labels for axes, giving units if possible, and provide a good title for the graph, too.  Use the graphical results to describe the patterns if any that exist in the data as focused toward the research question>
+```{r}
+contTable <- xtabs(~ Behavior + roll, data = scorp_data2)
+barchart(contTable,
+    auto.key = list(
+        space = "top",
+        title = "roll",
+        cex.title = 1,
+        columns = 1),
+    stack = FALSE , horizontal = FALSE)
+```
+
+The bar graph clearly shows that the scorpions are much more likely to have a wet sting when a threat is present, than in the control group when the threat is not present.
+
+This plot shows that when we factor the reaction time for both the control and experimental group the comparison has a positive correlation which would indicate that the reaction time for the experiemental group has a direct correlation to the reaction time for the control group.
 
 ### Numerical Descriptive Results
 
-<Numerical results go here. Use the numerical results to describe the patterns if any that exist in the data as focused toward the research question>
+```{r}
+attach(scorp_data2)
+```
+
+```{r}
+rol=table(roll,Behavior)
+rowPerc(rol)
+```
+
+During the rowPerc test it clearly shows that the scorpions are more likely to have a wet sting when a threat is present as opposed to when there is no threat present. About 70% of the scorpions will have a wet sting when the threat is present; while those who did not have a threat present only about 7% had a wet sting.
 
 ## Inferential Results
 
-<State hypothesis clearly.  Make sure your discussion of the inferential test covers all the aspects that the test output produces, such as test statistic, p-value etc.  Make a decision about the null hypothesis, explain the assumptions on which the selected test/procedure was based, and why the chosen procedure satisfys the assumptions and is appropriate to answer the research question>
+```{r}
+chisqtestGC(rol,simulate.p.value = TRUE ,graph=TRUE)
+```
+
+The chisqtest shows that we would reject the null hypothesis based on the fact that the wet sting was used more frequently with the threat prescence in comparison to when there is no threat present. The pvalue is significantly low which indicates that there is a difference between the two variables compared.
+
+<State hypothesis clearly. Make sure your discussion of the inferential test covers all the aspects that the test output produces, such as test statistic, p-value etc. Make a decision about the null hypothesis, explain the assumptions on which the selected test/procedure was based, and why the chosen procedure satisfys the assumptions and is appropriate to answer the research question>
 
 # Methods for different sizes (large vs small)
 
@@ -71,16 +138,35 @@ a chi-squared test would be chosen.>
 
 ### Graphical Descriptive Results
 
-<Graphical results here.  Make sure to show your code.  Provide appropriate labels for axes, giving units if possible, and provide a good title for the graph, too.  Use the graphical results to describe the patterns if any that exist in the data as focused toward the research question>
+```{r}
+contTable <- xtabs(~ Behavior + size, data = scorp_data2)
+barchart(contTable,
+	auto.key = list(
+		space = "top",
+		title = "size",
+		cex.title = 1,
+		columns = 1),
+	stack = FALSE , horizontal = FALSE)
+```
+The small scorpions have more of a reaction of the dry sting , while the larger scorpions have more of a wet sting reaction. There is no change in the no sting catergory, the large scorpions created a no sting reaction.
+
 
 ### Numerical Descriptive Results
 
-<Numerical results go here. Use the numerical results to describe the patterns if any that exist in the data as focused toward the research question>
+```{r}
+rol=table(size,Behavior)
+rowPerc(rol)
+```
 
+The outcome of our table did show that there was fundamental differences between the large and the small scorpions, being that the expected outcome shows that the adult scorpion shows a slight insignificant (.22%) higher percentage of wet stings. The biggest difference is in the dry sting category with the small scorpions giving you a significant higher percentage than any other of the categories represented on our table. 
 ## Inferential Results
 
-<State hypothesis clearly.  Make sure your discussion of the inferential test covers all the aspects that the test output produces, such as test statistic, p-value etc.  Make a decision about the null hypothesis, explain the assumptions on which the selected test/procedure was based, and why the chosen procedure satisfys the assumptions and is appropriate to answer the research question>
 
+```{r}
+chisqtestGC(rol,simulate.p.value = TRUE ,graph=TRUE)
+```
+
+Based on my expected null behavior my chi square statistic is five times greater then my degrees of freedom, and my p-value is almost zero. We must reject the Null Hypothesis based on the P Value is 0.001.  The possibilty of the behaviors being different are almost at 0 chance.
 
 # Discussion and Conclusion for both set of research questions
 
