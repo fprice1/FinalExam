@@ -15,73 +15,255 @@ require(tigerstats)
 
 # Introduction
 
-<In this section you explain what you are trying to show.  Where did the data come from?  What is the research or other question you are trying to answer?>
+An experiment under a controlled environment was done to determine if a scorpion is more likely to attack when it feels threatened or when is in it's normal state of safety (control).  The experiment also included a substudy to determine if the size of the scorpion would affect the outcome of the reaction type (Behavior). We were given two separate CSV Files. One file included (scorp_data) and the second (scorp_data2).  The files contained a total of 60 observations in which different measurements and variables were outlined. Below are both files referenced.
 
-#### what was asked for
-Investigate whether the odors from a predator might influence the defensive behavior of Hadrurus arizonensis, and if the scorpion size plays a role in the type of response.
+```{r}
+url2="scorpion_reaction_rolls.csv"
+scorp_data2=read.csv(url2,header=T)
+names(scorp_data2)
+attach(scorp_data2)
 
-we see this as two questions
+```
 
-##### does presence of odor change the expected outcome on our measurements?
+```{r}
+url="scorpion_reaction_paired.csv"
+scorp_data=read.csv(url,header=T)
+names(scorp_data)
+summary(scorp_data)
+attach(scorp_data)
+```
 
-<for continuous measurements we could ask for center differences (means or medians)
 
-for catagorical explanitory variables (such as count of type of response)
-a chi-squared test would be chosen.>
+#Below is a summary of what the experiment consisted of and the basis of our analysis:
 
-##### does size of the scorpion change the expected outcome on our measurements?
+*There were 30 different scorpions tested. Each scorpion was tested twice, once in control (no rat urine    present) and once in threat (rat urine) the order of testing was randomly assigned.  
 
-<for continuous measurements we could ask for center differences (means or medians)
+*We were given two comma separated values files containing these measurements;*
 
-for catagorical explanitory variables (such as count of type of response)
-a chi-squared test would be chosen.>
+ 1) Scorpion a tag indicating which scorpion was measured.
+ 2) Behavior a factor variable [no sting, dry sting, we sting, jab] 
+ 3) Volume a numerical measure of venom amount (wet sting) 
+ 4) Probes a numerical count of the number of “hits” applied to get a reaction 
+ 5) Reaction_Time a numerical measure of time it took to get a reaction 
+ 6) Size a factor (large,small) of scorpion size 
+ 7) *roll** a factor (control,threat) of absence or presence of an apparent threat to the scorpion (rat urine)
+
+
+## what was asked for?
+
+Investigate whether the odors from a predator might influence the defensive behavior of Hadrurus arizonensis, and if the scorpion size plays a role in the type of response or reaction.
+
+**we see this as a two separate questions:**
+
+## Question 1- Does presence of odor change the expected outcome on our measurements?
+
+We want to know if fear or threat play a factor into how a scorpion reacts to when it is being taunted.  In order to find out, we must first state what our Null Hypothesis and Alternate Hypothesis are;
+
+**H0 (Null Hypothesis)**-proposes that no statistical significance exists with these observations and that our                         results are based on pure chance. Regardless of the threat and control conditions, we                         will always get different outcomes.  
+**Ha (Alternate Hypothesis)**-proposes that it is expected that when threatened, a scorpion is most likely to                               be more aggrassive and attack with it's poinsonous (wet) sting.
+
+
+## Question 2- Does size of the scorpion change the expected outcome on our measurements?
+
+**H0 (Null Hypothesis)**-Proposes that no statistical significance exists with these observations and that our                          results are based on pure chance. The size of the scorpion does not make any                                  diference with the outcome of the behavior.
+
+**Ha(Alternate Hypothesis)**-Proposes that it is very likely that the size of the scorpion will affect it's                                behavior.  The larger the scorpion, the most likely it will trigger a deadly                                  attack when provoked or taunted.
+
 
 
 # Methods for presence vs absence of odor
 
-<Decide on your methods:  use "variable analysis" or other appropriate descriptors.  Make sure to choose at least one graphical method and at least one numerical method.>
+In order to answer question number 1, we will use a "variable analysis" and other appropriate descriptors. Given that we are dealing with two categorical values, threat/control, and behavior, we will make a Barplot for our Graphical results and a Rowpercentage based on those two categorical variables for our Numerical assessment.  We will do a Chi-Square Test for our Inferential Results.  
 
 #Results
 
-<Divide this section into two sub-sections:  One for your descriptive  results and one for your inferential results.>
+We have different types of results for our observations.  The first is Descriptive (a description of the different type of data tests we will run), the second is Graphical (a graph of our results), third is Numerical Results, and fourth Inferential Results. 
 
 ## Descriptive Results
 
-### Graphical Descriptive Results
+We need to understand the comparison between the scorpions when odor is a factor in terms of reacting or attacking. To explain when the scorpions would react, attack, or become more aggrevated, we must create a plot. With our plot, we will then compare the type of reactions from the scorpions when they feel threatened by a predator(rat urine) and when they do not feel threatened by a predator(no rat urine). In addition, we will also produce a correlation test and a t.test in order to show the comparisons between the control group and our predator group. We want to show how many probes it takes to trigger a reaction from the scorpions. We will see if there is a significant comparison between the two groups. We will begin our analysis by showing our head(rol), which describe our results from our scorpion analysis.
 
-<Graphical results here.  Make sure to show your code.  Provide appropriate labels for axes, giving units if possible, and provide a good title for the graph, too.  Use the graphical results to describe the patterns if any that exist in the data as focused toward the research question>
+```{r}
+rol=table(roll,Behavior)
+rol
+```
+
+
+```{r}
+head(rol)
+```
+
+
+## Graphical Descriptive Results
+
+```{r}
+contTable <- xtabs(~ Behavior + roll, data = scorp_data2)
+barchart(contTable,
+    auto.key = list(
+        space = "top",
+        title = "roll",
+        cex.title = 1,
+        columns = 1),
+    stack = FALSE , horizontal = FALSE)
+```
+
+The bar graph clearly shows that the scorpions are much more likely to have a wet sting when a threat is present, than in the control group when the threat is not present.  There is a signifiant difference between the two groups.  Although we had more of a Dry sting reaction from our control group, which could indicate that the behavior was more of an attack, our wet sting observation was highly more significant.
+
+
+## Graphical Descriptive Results (Probes it takes to set off a scorpion based on threat or no threat conditions)
+
+```{r}
+bwplot( ~ Probes_predator,
+	data = scorp_data)
+```
+
+```{r}
+bwplot( ~ Probes_control,
+	data = scorp_data)
+```
+
+Our plots show that it takes more probes to trigger a reaction (behavior) from our control group and it takes less probes (taunting) to trigger a reaction (behavior) from our threat group. This is strong evidence for our assumption, which is that under threat conditions, it does not take much to provoke a reaction from our scorpion.
 
 ### Numerical Descriptive Results
 
-<Numerical results go here. Use the numerical results to describe the patterns if any that exist in the data as focused toward the research question>
+
+```{r}
+rol=table(roll,Behavior)
+rowPerc(rol)
+```
+
+Our rowPerc test clearly shows that the scorpions are more likely to have a wet sting when a threat is present as opposed to when there is no threat present. About 70% of the scorpions will have a wet sting when the threat is present; while those who did not have a threat present only about 7% had a wet sting. These results are supportive of our alternate hypothesis, a scorpion is more likely to trigger a deadly attack when it feels threatened.
+
+## Numerical Results (number of probes it takes to set off a reaction under control and threat conditions)
+
+```{r}
+cor.test(scorp_data$Probes_control,scorp_data$Probes_predator)
+```
+
+When we run our correlation test, we can see that our correlation is slightly over 0.4, which indicates there is a moderate relationship between both of our groups as to the amount of probes it takes to trigger a reaction, regardless of the outcome of the behavior.  We would assume that a scorpion would react spontaneously when provoked.
 
 ## Inferential Results
 
-<State hypothesis clearly.  Make sure your discussion of the inferential test covers all the aspects that the test output produces, such as test statistic, p-value etc.  Make a decision about the null hypothesis, explain the assumptions on which the selected test/procedure was based, and why the chosen procedure satisfys the assumptions and is appropriate to answer the research question>
+```{r}
+rol=table(roll,Behavior)
+rol
+chisqtestGC(rol)
+```
+
+
+```{r}
+chisqtestGC(rol,simulate.p.value = TRUE ,graph=TRUE)
+```
+
+
+
+The chisqtest shows that we would reject the null hypothesis based on the fact that the wet sting was used more frequently with the threat presence in comparison to when there is no threat present. The p-value is significantly low which indicates that there is a difference between the two variables compared. This is strong evidence against our null hypothesis. We would expect to see more of a deadly reaction from our scorpions when a threat is present.
+
+
+## Inferential Results (number of probes it takes to set off a reaction under threat and no threat conditions)
+
+
+```{r}
+t.test(Probes_control,Probes_predator,data=scorp_data2)
+```
+
+Our t.test results are very close to zero.  This is strong evidence against the Null Hypothesis.  It is evident that our assumption is correct.  We would expect a faster reaction from our threat group when provoked/taunted.
+
+## Question 2: Does size of the scorpion change the expected outcome on our measurements?
+
+**In other words, does size matter?**
+
 
 # Methods for different sizes (large vs small)
 
-<Decide on your methods:  use "variable analysis" or other appropriate descriptors.  Make sure to choose at least one graphical method and at least one numerical method.>
+In order to answer question number 2, we will use a "variable analysis" and other appropriate descriptors. Given that we are dealing with two categorical values, size and behavior, we will make a Barplot for our Graphical results and a Rowpercentage based on those two categorical variables for our Numerical assessment.  We will do a Chi-Square Test for our Inferential Results.  
 
-#Results
 
-<Divide this section into two sub-sections:  One for your descriptive  results and one for your inferential results.>
+# Results
+
+We have different types of results for our observations.  The first is Descriptive (a description of the different type of data tests we will run), the second is Graphical (a graph of our results), third is Numerical Results, and fourth Inferential Results. 
+
 
 ## Descriptive Results
 
+We want to show if the size of the scorpion changes the type of reaction or behavior we got from our data observations.  Our assumption is that larger scorpions will react differently when provoked.  A larger scorpion most likely it is older and therefore more experienced when dealing with a threatening situation.  To further explain this, we must create a plot.  With our plot, we will then compare behaviors related to size.  We will see if there is a significance difference.  Furthermore, we will also produce a correlation test and a t.test in order to show the comparisons or similarities with our scorpions as to the reaction time it takes for a scorpion to trigger a behavior when taunted or provoked (probes).   We begin by attaching our scorp_data, which shows our factor (categorical), and numerical variables masked from our scorp_data2. 
+
+```{r}
+attach(scorp_data)
+```
+
 ### Graphical Descriptive Results
 
-<Graphical results here.  Make sure to show your code.  Provide appropriate labels for axes, giving units if possible, and provide a good title for the graph, too.  Use the graphical results to describe the patterns if any that exist in the data as focused toward the research question>
+```{r}
+contTable <- xtabs(~ Behavior + size, data = scorp_data2)
+barchart(contTable,
+	auto.key = list(
+		space = "top",
+		title = "size",
+		cex.title = 1,
+		columns = 1),
+	stack = FALSE , horizontal = FALSE)
+```
+
+The small scorpions have more of a reaction of the dry sting , while the larger scorpions have more of a wet sting reaction. There is no change in the no sting catergory, the large scorpions created a no sting reaction.
+This supports our alternate hypothesis.  The large scorpions are more likely to trigger a deadly attack since they are more likely to carry more venon in their sting. 
+
+### Graphical Descriptive Results (Reaction time difference between control and threat groups)
+
+```{r}
+probes  <- equal.count(scorp_data2$Probes, number = 2, overlap = 0.1)
+bwplot( ~ Reaction_Time | probes ,
+	data = scorp_data2,
+	layout = c(1,2),
+	main = "Probes control and Probes Threat Reaction Time Plot",
+	ylab = "Probes Threat - Probes Control")
+```
+
+This plot shows that when we factor the reaction time for both the control and the threat group, we see that the threat group has a faster reaction time than the control group. This is strong evidence for our assumption, which is that under threat conditions, a scorpion is more likely to react faster.
 
 ### Numerical Descriptive Results
 
-<Numerical results go here. Use the numerical results to describe the patterns if any that exist in the data as focused toward the research question>
+````{r}
+attach(scorp_data2)
+```
+
+```{r}
+rol=table(size,Behavior)
+rowPerc(rol)
+```
+
+The outcome of our table did show that there was fundamental differences between the large and the small scorpions, being that the expected outcome shows that the adult scorpion shows a slight insignificant (.22%) higher percentage of wet stings. The biggest difference is in the dry sting category with the small scorpions giving you a significant higher percentage than any other of the categories represented on our table. This is evidence against our Null Hypothesis.  Our assumption is that larger scorpions will trigger more of a wet sting and that smaller scorpions will trigger more of a dry sting when provoked.
+
+
+```{r}
+cor.test(scorp_data2$Reaction_Time,scorp_data2$Probes)
+
+```
+
+Our results indicate that there is a moderate relationship between the reaction time and the amount of probes it takes to trigger a behavior.  We are confident that our assumption is correct.  It does not take much to get an attack reaction from our group of scorpions.   In other words, a scorpion it is likely to react quickly when provoked. 
+
 
 ## Inferential Results
 
-<State hypothesis clearly.  Make sure your discussion of the inferential test covers all the aspects that the test output produces, such as test statistic, p-value etc.  Make a decision about the null hypothesis, explain the assumptions on which the selected test/procedure was based, and why the chosen procedure satisfys the assumptions and is appropriate to answer the research question>
+```{r}
+sze=table(size,Behavior)
+chisqtestGC(sze)
+```
 
+
+```{r}
+chisqtestGC(rol,simulate.p.value = TRUE ,graph=TRUE)
+```
+
+Based on my expected null behavior my chi square statistic is five times greater then my degrees of freedom, and my p-value is almost zero. We must reject the Null Hypothesis based on the P Value is 0.001.  The possibilty of the behaviors being different are almost at 0 chance.
+
+```{r}
+t.test(scorp_data2$Reaction_Time,scorp_data2$Probes)
+```
+
+Our t.test results support our assumption and reject the null.  Given that our P-Value is .12, we are confident that our assumptions are correct.  We are more likely to see a fast reaction time from a scorpion when provoked.  We are saying that it will not take much taunting to trigger a reaction from our group.
 
 # Discussion and Conclusion for both set of research questions
 
-<Discussion and conclusion here.  If you found a relationship be sure to consider whether the relationship occurs because one of the variavbles causes the other, or whether they perhasps are related for some other reason.>
+In conclusion, we have seen strong evidence against both our previously stated null hypothesis, which indicates we must reject both.  Our data analysis has given us positive findings towards our alternate hypothesis and that our assumptions are correct.  We are more likely to see a (wet sting) reaction from our scorpions during threat conditions rather than control.  These are naturally aggressive desert creatures, which live in harsh environments and are part of the desert food chain.  We presume that their defense behavior would be enhanced under threatening conditions.  Our Graphical, Numerical, and Inferential Results support our assumption.  In addition, our correlation and t.tests showed a moderate relationship between both control and threat group in terms of the amount of probes it takes to get a reaction or behavior from our scorpions.  Our assumption was that it does not take much taunting or provoking to trigger a reaction from this aggressive species.  Our data analysis also showed strong evidence against our second Null Hypothesis.  Our Graphical, Numerical, and Inferential Results demonstrated that size actually matters with our species.  Our assumption or alternate hypothesis was that there is a difference in behavior with our larger scorpions triggering more of a venomous attack (wet sting) compared to our smaller scorpions.  Our data showed that smaller scorpions triggered more of a dry sting compared to more a wet sting from our larger ones.  Lastly, we also showed with our correlation test and our t.test that there is a moderate relationship between the reaction time and the number of probes it takes to set off an attack from our groups.  Our assumption is that this naturally aggressive species will attack quickly when provoked and that it does not take much taunting or provoking to set it off.  In other words, don’t mess with it unless you want to be its next meal.
+
